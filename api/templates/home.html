@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CERTISCAN - NPTEL Certificate Upload</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo img {
+            height: 40px;
+        }
+
+        .logo h2 {
+            font-weight: 600;
+            font-size: 1.5rem;
+        }
+        .logo h1 {
+            font-weight: 500;
+            font-size: 1rem;
+
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            animation: fadeIn 1s ease;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        /* Upload Section */
+        .upload-section {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+            animation: slideUp 0.8s ease;
+        }
+
+        .upload-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .upload-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            border: 2px dashed var(--primary-color);
+            border-radius: 8px;
+            background-color: rgba(52, 152, 219, 0.05);
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            min-height: 200px;
+        }
+
+        .upload-container:hover {
+            border-color: var(--secondary-color);
+            background-color: rgba(52, 152, 219, 0.1);
+        }
+
+        .upload-container.active {
+            border-color: var(--success-color);
+            background-color: rgba(46, 204, 113, 0.1);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            transition: transform 0.3s;
+        }
+
+        .upload-container:hover .upload-icon {
+            transform: scale(1.1);
+        }
+
+        .upload-text {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .upload-text h3 {
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-text p {
+            color: #666;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .file-info {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .upload-btn {
+            padding: 0.8rem 1.8rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 1rem;
+        }
+
+        .upload-btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        .upload-btn:active {
+            transform: translateY(0);
+        }
+
+        .upload-btn i {
+            font-size: 1.2rem;
+        }
+
+        /* Message Styles */
+        .message {
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 5px;
+            animation: fadeIn 0.5s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .message.success {
+            background-color: rgba(46, 204, 113, 0.2);
+            border-left: 4px solid var(--success-color);
+            color: var(--dark-color);
+        }
+
+        .message.error {
+            background-color: rgba(231, 76, 60, 0.2);
+            border-left: 4px solid var(--accent-color);
+            color: var(--dark-color);
+        }
+
+        .message i {
+            font-size: 1.2rem;
+        }
+
+        /* Table Section */
+        .data-section {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+            animation: fadeIn 1s ease;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-header h2 {
+            color: var(--dark-color);
+            font-size: 1.8rem;
+        }
+
+        .download-btn {
+            padding: 0.7rem 1.5rem;
+            background-color: var(--success-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .download-btn:hover {
+            background-color: #27ae60;
+            transform: translateY(-2px);
+        }
+
+        .download-btn:active {
+            transform: translateY(0);
+        }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            margin-top: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .certificate-preview {
+            width: 150px;
+            height: 100px;
+            border-radius: 5px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .certificate-preview:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .certificate-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .certificate-preview .pdf-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            background-color: #f1f1f1;
+            color: var(--accent-color);
+            font-size: 2rem;
+        }
+
+        /* Footer Styles */
+        .footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 1rem;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 1rem;
+        }
+
+        .social-icons a {
+            color: white;
+            font-size: 1.5rem;
+            transition: color 0.3s, transform 0.3s;
+        }
+
+        .social-icons a:hover {
+            color: var(--primary-color);
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            font-size: 0.9rem;
+            color: #bbb;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                gap: 10px;
+                margin-top: 1rem;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .hamburger {
+                display: block;
+                position: absolute;
+                right: 1rem;
+                top: 1rem;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .page-header h1 {
+                font-size: 2rem;
+            }
+
+            .upload-section, .data-section {
+                padding: 1.5rem;
+            }
+
+            th, td {
+                padding: 8px 10px;
+                font-size: 0.85rem;
+            }
+
+            .certificate-preview {
+                width: 100px;
+                height: 70px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .upload-text h3 {
+                font-size: 1.2rem;
+            }
+
+            .upload-btn {
+                padding: 0.7rem 1.5rem;
+                font-size: 0.9rem;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .footer-links {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">
+            <img src="data:image/jpeg;base64,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" alt="NPTEL Logo">
+            <h2>CERTISCAN</h2>
+           <h1>Welcome : {{ request.user.username }}</h1>
+        </div>
+        <div class="nav-links" id="navLinks">
+            <a href="#"><i class="fas fa-home"></i> Home</a>
+            <a href="#"><i class="fas fa-upload"></i> Upload</a>
+            <a href="#"><i class="fas fa-history"></i> History</a>
+            <a href="{% url 'logout' %}"><i class="fas fa-question-circle"></i> Logout</a>
+            <a href="{% url 'download_excel' %}"><i class="fas fa-excel"></i>Download Excel</a>
+        </div>
+        <div class="hamburger" id="hamburger">
+            <i class="fas fa-bars"></i>
+        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="page-header">
+            <h1>Upload NPTEL Certificates</h1>
+            <p>Upload your certificates in PDF or image format to extract and manage your NPTEL achievements</p>
+        </div>
+
+        {% if message %}
+            <div class="message {% if 'success' in message|lower %}success{% else %}error{% endif %}">
+                <i class="fas {% if 'success' in message|lower %}fa-check-circle{% else %}fa-exclamation-circle{% endif %}"></i>
+                <span>{{ message }}</span>
+            </div>
+        {% endif %}
+
+        <!-- Upload Section -->
+        <section class="upload-section">
+            <form method="post" enctype="multipart/form-data" id="uploadForm">
+                {% csrf_token %}
+                <div class="upload-container" id="dropZone">
+                    <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                    <div class="upload-text">
+                        <h3>Drag & Drop Your Files Here</h3>
+                        <p>or click to browse files (PDF, JPG, PNG)</p>
+                    </div>
+                    <input type="file" name="certificates" id="fileInput" multiple accept=".jpg, .jpeg, .png, .pdf" required>
+                    <div class="file-info" id="fileInfo">No files selected</div>
+                    <button type="submit" class="upload-btn" id="uploadButton">
+                        <i class="fas fa-upload"></i> Upload Files
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Data Section -->
+        {% if data %}
+            <section class="data-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-table"></i> Extracted Data</h2>
+                    <form method="get" action="{% url 'download_excel' %}">
+                        <button type="submit" class="download-btn">
+                            <i class="fas fa-file-excel"></i> Download Excel
+                        </button>
+                    </form>
+                </div>
+                
+                <div class="table-container">
+                    {% load custom_filters %}
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>S.NO</th>
+                                {% for key in data.0.keys %}
+                                    <th>{{ key }}</th>
+                                {% endfor %}
+                                <th>Certificate Preview</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in data %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    {% for value in row.values %}
+                                        <td>{{ value }}</td>
+                                    {% endfor %}
+                                
+                                    <!-- ... other template code ... -->
+                            
+                                    <td>
+                                        {% if row.Image_URL %}
+                                            <div class="certificate-preview">
+                                                {% if row.Image_URL|endswith:".pdf" %}
+                                                    <div class="pdf-icon">
+                                                        <i class="fas fa-file-pdf"></i>
+                                                    </div>
+                                                {% else %}
+                                                    <img src="{{ row.Image_URL }}" alt="Certificate Image">
+                                                {% endif %}
+                                            </div>
+                                        {% else %}
+                                            <p>No Preview Available</p>
+                                        {% endif %}
+                                    </td>
+                                    <!-- ... rest of the template ... -->
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        {% endif %}
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="#">About NPTEL</a>
+                <a href="#">Contact Us</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">FAQ</a>
+            </div>
+            <div class="social-icons">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+            </div>
+            <p class="copyright">
+                CERTISCAN DEVELOPER VIKAS & ADITYA
+            </p>
+            <p class="copyright">
+                &copy; 2025 CERTISCAN NPTEL Certificate Management System. All rights reserved.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('hamburger').addEventListener('click', function() {
+            document.getElementById('navLinks').classList.toggle('active');
+        });
+
+        // Drag and drop functionality
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const fileInfo = document.getElementById('fileInfo');
+        const uploadForm = document.getElementById('uploadForm');
+
+        // Prevent default drag behaviors
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+            document.body.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        // Highlight drop zone when item is dragged over it
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight() {
+            dropZone.classList.add('active');
+        }
+
+        function unhighlight() {
+            dropZone.classList.remove('active');
+        }
+
+        // Handle dropped files
+        dropZone.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            fileInput.files = files;
+            updateFileInfo(files);
+        }
+
+        // Handle clicked files
+        fileInput.addEventListener('change', function() {
+            updateFileInfo(this.files);
+        });
+
+        function updateFileInfo(files) {
+            if (files.length > 0) {
+                let fileNames = [];
+                for (let i = 0; i < Math.min(files.length, 3); i++) {
+                    fileNames.push(files[i].name);
+                }
+                
+                let infoText = `${files.length} file(s) selected: ${fileNames.join(', ')}`;
+                if (files.length > 3) {
+                    infoText += ` and ${files.length - 3} more...`;
+                }
+                
+                fileInfo.textContent = infoText;
+                fileInfo.style.color = 'var(--success-color)';
+            } else {
+                fileInfo.textContent = 'No files selected';
+                fileInfo.style.color = '#666';
+            }
+        }
+
+        // Form submission animation
+        uploadForm.addEventListener('submit', function(e) {
+            const uploadBtn = document.getElementById('uploadButton');
+            uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            uploadBtn.disabled = true;
+            
+            // You can add additional animations here if needed
+            dropZone.style.animation = 'pulse 1.5s infinite';
+        });
+
+        // Click anywhere on drop zone to trigger file input
+        dropZone.addEventListener('click', function() {
+            fileInput.click();
+        });
+    </script>
+</body>
+</html>

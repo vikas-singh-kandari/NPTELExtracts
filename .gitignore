@@ -1,0 +1,21 @@
+# Ignore environment variable file
+.env
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+
+# SQLite database
+db.sqlite3
+
+# Static files
+staticfiles/
+
+# VSCode settings
+.vscode/
+
+# exel file
+media\excel_output
+
+# Ignore Excel files
+*.xlsx
