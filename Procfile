@@ -1,1 +1,1 @@
-web: gunicorn  Nptel_certificate.wsgi:application --timeout 180 --workers 3 --bind 0.0.0.0:$PORT
+web: gunicorn  Nptel_certificate.wsgi:application --timeout 300 --workers 3 --bind 0.0.0.0:$PORT
